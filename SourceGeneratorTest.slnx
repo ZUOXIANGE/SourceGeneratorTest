@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Core/Core.csproj" Id="fb165751-2be3-4a92-bae9-762959f973ef" />
+  <Project Path="Repositories/Repositories.csproj" Id="72bf454b-a4e5-4893-9956-d9a4f85011a0" />
+  <Project Path="Services/Services.csproj" Id="de78f2f8-8a08-448d-bd1d-6826f36f2c15" />
+  <Project Path="SourceGeneratorTest/SourceGeneratorTest.csproj" />
+</Solution>
