@@ -1,5 +1,7 @@
 using Core.Dtos;
+using Core.Options;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Services;
 
 namespace SourceGeneratorTest.Controllers;
@@ -11,11 +13,12 @@ public partial class TestController : ControllerBase
 {
     private readonly ILogger<TestController> _logger;
     private readonly IOrderService _orderService;
+    private readonly IOptionsMonitor<TestOptions> _testOptionsMonitor;
 
     [HttpGet("ping")]
     public string Ping()
     {
-        _logger.LogInformation("测试请求");
+        _logger.LogInformation("当前配置:{@options}", _testOptionsMonitor.CurrentValue);
         return "pong";
     }
 

@@ -7,6 +7,7 @@ using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Repositories;
 using Serilog.Exceptions;
+using Core.Options;
 
 Console.Title = "SourceGenerator相关框架测试";
 
@@ -45,6 +46,7 @@ try
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+    builder.Services.Configure<TestOptions>(builder.Configuration);
 
     // 注册HTTP日志记录服务
     builder.Services.AddHttpLogging(logging =>
@@ -65,14 +67,20 @@ try
 
     //使用SourceGenerator在编译时生成注入方法
     //builder.Services.AddScoped<IOrderService, OrderService>();
+    //Injectio  需要在每个类上标记
     builder.Services.AddServices();
+    //ServiceScan.SourceGenerator  可以通过名称等条件过滤
+    builder.Services.AddRepositories();
+    //使用CustomHandler实现配置注入
+    builder.Services.AddCustomOptions(builder.Configuration);
+
     //使用反射扫描注入
     //builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-    builder.Services.Scan(scan => scan
-        .FromAssemblyOf<IOrderRepository>()
-        .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repository")))
-        .AsImplementedInterfaces()
-        .WithScopedLifetime());
+    //builder.Services.Scan(scan => scan
+    //    .FromAssemblyOf<IOrderRepository>()
+    //    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repository")))
+    //    .AsImplementedInterfaces()
+    //    .WithScopedLifetime());
 
     var app = builder.Build();
 
