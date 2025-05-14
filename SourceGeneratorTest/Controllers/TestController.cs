@@ -14,11 +14,17 @@ public partial class TestController : ControllerBase
     private readonly ILogger<TestController> _logger;
     private readonly IOrderService _orderService;
     private readonly IOptionsMonitor<TestOptions> _testOptionsMonitor;
+    private readonly IOptionsMonitor<OrderOptions> _orderOptionsMonitor;
+    private readonly IOptions<AppSettings> _appSettings;
+
 
     [HttpGet("ping")]
     public string Ping()
     {
-        _logger.LogInformation("当前配置:{@options}", _testOptionsMonitor.CurrentValue);
+        _logger.LogInformation("当前配置1:{@options}", _testOptionsMonitor.CurrentValue);
+        _logger.LogInformation("当前配置2:{@options}", _orderOptionsMonitor.CurrentValue);
+        _logger.LogInformation("当前配置3:{@options}", _appSettings.Value);
+
         return "pong";
     }
 
