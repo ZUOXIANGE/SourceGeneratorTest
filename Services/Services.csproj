@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <!-- 这里测试下传递依赖,这样就不用在被依赖项目中再次引用AutoCtor -->
-    <PackageReference Include="AutoCtor" Version="2.8.0" ExcludeAssets="runtime" />
+    <PackageReference Include="AutoCtor" Version="2.8.1" ExcludeAssets="runtime" />
     <!--<PackageReference Include="AutoCtor" Version="2.8.0" PrivateAssets="all" ExcludeAssets="runtime" />-->
     <PackageReference Include="Injectio" Version="5.0.0" PrivateAssets="all" />
   </ItemGroup>
