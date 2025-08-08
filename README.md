@@ -10,6 +10,7 @@
 - **配置管理**: 使用源代码生成器自动注册配置选项
 - **日志记录**: 集成 Serilog 进行结构化日志记录
 - **API 文档**: 集成 Swagger/OpenAPI 文档
+- **现代化测试**: 使用 TUnit 测试框架进行全面的单元测试和集成测试
 
 ## 📁 项目结构
 
@@ -48,12 +49,19 @@ SourceGeneratorTest/
 │   │   ├── OrderService.cs        # 订单服务实现
 │   │   └── ProductService.cs      # 产品服务实现
 │   └── ServicesExtensions.cs     # 服务注册扩展
-└── SourceGeneratorTest/           # Web API 层
-    ├── Controllers/               # 控制器
-    │   ├── TestController.cs      # 测试控制器
-    │   └── ProductController.cs   # 产品控制器
-    ├── Program.cs                 # 程序入口
-    └── appsettings.json          # 配置文件
+├── SourceGeneratorTest/           # Web API 层
+│   ├── Controllers/               # 控制器
+│   │   ├── TestController.cs      # 测试控制器
+│   │   └── ProductController.cs   # 产品控制器
+│   ├── Program.cs                 # 程序入口
+│   └── appsettings.json          # 配置文件
+└── Tests/                         # 测试项目
+    ├── Data/                      # 测试数据和生成器
+    │   ├── DataClass.cs           # 测试数据类
+    │   ├── DataSourceGenerator.cs # 数据源生成器
+    │   └── DependencyInjectionClassConstructor.cs # DI构造器
+    ├── GlobalSetup.cs             # 全局测试设置
+    ├── MapperTests.cs             # 映射器测试
 ```
 
 ## 🔧 使用的源代码生成器框架
@@ -136,6 +144,60 @@ public class TestOptions
 // 自动注册: services.Configure<TestOptions>(configuration.GetSection("TestOptions"));
 ```
 
+### 6. [TUnit](https://github.com/thomhurst/TUnit) - 现代化测试框架
+基于源代码生成器的现代 .NET 测试框架，提供高性能和类型安全的测试体验。
+
+**主要特性:**
+- **源代码生成**: 编译时生成测试代码，提供更好的性能
+- **完全异步支持**: 原生支持异步测试方法
+- **并行执行**: 默认并行执行测试，提高测试速度
+- **类型安全**: 编译时类型检查，避免运行时错误
+- **现代语法**: 支持现代 C# 语法特性
+
+**使用示例:**
+```csharp
+[Test]
+public async Task CreateProduct_ShouldReturnValidGuid()
+{
+    // Arrange
+    var request = new CreateProductReq
+    {
+        Name = "Test Product",
+        Price = 99.99m,
+        Category = ProductCategory.Electronics
+    };
+
+    // Act
+    var result = await _productService.CreateProductAsync(request);
+
+    // Assert
+    await Assert.That(result).IsNotEqualTo(Guid.Empty);
+}
+
+[Test]
+[Arguments("iPhone", 999.99, ProductCategory.Electronics)]
+[Arguments("Book", 29.99, ProductCategory.Books)]
+public async Task CreateProduct_WithDifferentCategories_ShouldReturnCorrectDescription(
+    string name, decimal price, ProductCategory category)
+{
+    // 参数化测试示例
+    var request = new CreateProductReq { Name = name, Price = price, Category = category };
+    var result = await _productService.CreateProductAsync(request);
+    
+    await Assert.That(result).IsNotEqualTo(Guid.Empty);
+}
+
+[Test]
+public async Task GetProduct_WithNonExistentId_ShouldThrowException()
+{
+    // 异常测试示例
+    var nonExistentId = Guid.NewGuid();
+    
+    await Assert.That(() => _productService.GetProductAsync(nonExistentId))
+        .Throws<ArgumentNullException>();
+}
+```
+
 ## 🔍 源代码生成器的优势
 
 1. **编译时生成**: 所有代码在编译时生成，运行时无反射开销
@@ -144,42 +206,19 @@ public class TestOptions
 4. **代码可见**: 生成的代码可以在 IDE 中查看和调试
 5. **减少样板代码**: 大幅减少重复的样板代码编写
 
-## 🧪 测试示例
-
-### 创建订单
-```bash
-curl -X POST "http://localhost:5088/api/test/createOrder" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "张三",
-    "phone": "13800138000",
-    "address": {
-      "city": "北京",
-      "detail": "朝阳区某某街道"
-    },
-    "orderType": 1
-  }'
-```
-
-### 创建产品
-```bash
-curl -X POST "http://localhost:5088/api/product" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "iPhone 15",
-    "description": "最新款苹果手机",
-    "price": 7999.00,
-    "category": 1,
-    "isAvailable": true
-  }'
-```
 
 ## 📚 学习资源
 
+### 源代码生成器
 - [.NET Source Generators 官方文档](https://docs.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/source-generators-overview)
 - [AutoCtor 使用指南](https://github.com/distantcam/AutoCtor)
 - [Mapperly 映射器文档](https://mapperly.riok.app/)
 - [枚举生成器文档](https://github.com/andrewlock/NetEscapades.EnumGenerators)
+- [ServiceScan.SourceGenerator 文档](https://github.com/Dreamescaper/ServiceScan.SourceGenerator)
+
+### 测试框架
+- [TUnit 官方文档](https://github.com/thomhurst/TUnit)
+- [TUnit 快速开始指南](https://github.com/thomhurst/TUnit/wiki/Getting-Started)
 
 ## 🤝 贡献
 
