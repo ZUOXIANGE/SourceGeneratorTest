@@ -7,7 +7,7 @@ using Services;
 namespace SourceGeneratorTest.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 [AutoConstruct(GuardSetting.Enabled)]
 public partial class TestController : ControllerBase
 {
