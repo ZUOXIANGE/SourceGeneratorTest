@@ -16,6 +16,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="app.db-shm" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!--<PackageReference Include="AutoCtor" Version="2.8.0" PrivateAssets="all" ExcludeAssets="runtime" />-->
     <PackageReference Include="Scrutor" Version="6.1.0" />
     <PackageReference Include="Serilog" Version="4.3.0" />

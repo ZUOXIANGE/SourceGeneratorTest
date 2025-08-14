@@ -8,6 +8,8 @@ using System.Text.Unicode;
 using Repositories;
 using Serilog.Exceptions;
 using Core.Options;
+using Core.Data;
+
 
 Console.Title = "SourceGenerator相关框架测试";
 
@@ -65,6 +67,13 @@ try
 
     builder.Services.AddMemoryCache();
 
+    // 添加数据库服务
+    builder.Services.AddDatabase(builder.Configuration);
+
+    // 添加自定义服务
+    //builder.Services.AddScoped<IProductService, ProductService>();
+    //builder.Services.AddScoped<IOrderService, OrderService>();
+
     //使用SourceGenerator在编译时生成注入方法
     //builder.Services.AddScoped<IOrderService, OrderService>();
     //Injectio  需要在每个类上标记
@@ -83,6 +92,9 @@ try
     //    .WithScopedLifetime());
 
     var app = builder.Build();
+
+    // 确保数据库已创建
+    await app.Services.EnsureDatabaseCreatedAsync();
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())

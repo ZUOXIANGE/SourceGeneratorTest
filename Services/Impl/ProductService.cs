@@ -54,4 +54,45 @@ public partial class ProductService : IProductService
         await _productRepository.DeleteAsync(id);
         _logger.LogInformation("Deleted product with id: {id}", id);
     }
+
+    public async Task<List<ProductEntity>> GetAllProductEntitiesAsync()
+    {
+        return await _productRepository.GetAllAsync();
+    }
+
+    public async Task<ProductEntity?> GetProductByIdAsync(Guid id)
+    {
+        return await _productRepository.GetByIdAsync(id);
+    }
+
+    public async Task<ProductEntity> CreateProductEntityAsync(ProductEntity product)
+    {
+        return await _productRepository.CreateAsync(product);
+    }
+
+    public async Task<ProductEntity?> UpdateProductAsync(Guid id, ProductEntity product)
+    {
+        var existingProduct = await _productRepository.GetByIdAsync(id);
+        
+        if (existingProduct == null)
+            return null;
+
+        existingProduct.Name = product.Name;
+        existingProduct.Description = product.Description;
+        existingProduct.Price = product.Price;
+        existingProduct.Category = product.Category;
+        existingProduct.IsAvailable = product.IsAvailable;
+
+        return await _productRepository.UpdateAsync(existingProduct);
+    }
+
+    public async Task<bool> DeleteProductEntityAsync(Guid id)
+    {
+        return await _productRepository.DeleteByIdAsync(id);
+    }
+
+    public async Task<List<ProductEntity>> GetProductsByCategoryAsync(ProductCategory category)
+    {
+        return await _productRepository.GetByCategoryAsync(category);
+    }
 }

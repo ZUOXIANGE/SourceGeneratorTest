@@ -1,4 +1,5 @@
 using Core.Dtos;
+using Core.Entities;
 
 namespace Services;
 
@@ -30,4 +31,46 @@ public interface IProductService
     /// <param name="id"></param>
     /// <returns></returns>
     Task DeleteProductAsync(Guid id);
+
+    /// <summary>
+    /// 获取所有产品实体
+    /// </summary>
+    /// <returns></returns>
+    Task<List<ProductEntity>> GetAllProductEntitiesAsync();
+
+    /// <summary>
+    /// 根据ID获取产品实体
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task<ProductEntity?> GetProductByIdAsync(Guid id);
+
+    /// <summary>
+    /// 创建产品实体
+    /// </summary>
+    /// <param name="product"></param>
+    /// <returns></returns>
+    Task<ProductEntity> CreateProductEntityAsync(ProductEntity product);
+
+    /// <summary>
+    /// 更新产品
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="product"></param>
+    /// <returns></returns>
+    Task<ProductEntity?> UpdateProductAsync(Guid id, ProductEntity product);
+
+    /// <summary>
+    /// 删除产品实体
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task<bool> DeleteProductEntityAsync(Guid id);
+
+    /// <summary>
+    /// 根据分类获取产品
+    /// </summary>
+    /// <param name="category"></param>
+    /// <returns></returns>
+    Task<List<ProductEntity>> GetProductsByCategoryAsync(ProductCategory category);
 }

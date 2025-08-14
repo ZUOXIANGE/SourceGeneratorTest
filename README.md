@@ -52,7 +52,8 @@ SourceGeneratorTest/
 ├── SourceGeneratorTest/           # Web API 层
 │   ├── Controllers/               # 控制器
 │   │   ├── TestController.cs      # 测试控制器
-│   │   └── ProductController.cs   # 产品控制器
+│   │   ├── ProductController.cs   # 产品控制器
+│   │   └── DatabaseDemoController.cs # 数据库演示控制器
 │   ├── Program.cs                 # 程序入口
 │   └── appsettings.json          # 配置文件
 └── Tests/                         # 测试项目
@@ -215,6 +216,7 @@ public async Task GetProduct_WithNonExistentId_ShouldThrowException()
 - [Mapperly 映射器文档](https://mapperly.riok.app/)
 - [枚举生成器文档](https://github.com/andrewlock/NetEscapades.EnumGenerators)
 - [ServiceScan.SourceGenerator 文档](https://github.com/Dreamescaper/ServiceScan.SourceGenerator)
+- [AutoDbSet 官方文档](https://github.com/Atulin/AutoDbSet)
 
 ### 测试框架
 - [TUnit 官方文档](https://github.com/thomhurst/TUnit)

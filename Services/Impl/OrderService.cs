@@ -46,4 +46,49 @@ public partial class OrderService : IOrderService
             throw new Exception("订单类型映射错误");
         return dto;
     }
+
+    public async Task<List<OrderEntity>> GetAllOrdersAsync()
+    {
+        return await _orderRepository.GetAllAsync();
+    }
+
+    public async Task<OrderEntity?> GetOrderByIdAsync(Guid id)
+    {
+        return await _orderRepository.GetByIdAsync(id);
+    }
+
+    public async Task<OrderEntity> CreateOrderEntityAsync(OrderEntity order)
+    {
+        return await _orderRepository.CreateAsync(order);
+    }
+
+    public async Task<OrderEntity?> UpdateOrderAsync(Guid id, OrderEntity order)
+    {
+        var existingOrder = await _orderRepository.GetByIdAsync(id);
+        
+        if (existingOrder == null)
+            return null;
+
+        existingOrder.Name = order.Name;
+        existingOrder.Phone = order.Phone;
+        existingOrder.Address = order.Address;
+        existingOrder.OrderType = order.OrderType;
+
+        return await _orderRepository.UpdateAsync(existingOrder);
+    }
+
+    public async Task<bool> DeleteOrderAsync(Guid id)
+    {
+        return await _orderRepository.DeleteByIdAsync(id);
+    }
+
+    public async Task<List<OrderEntity>> GetOrdersByTypeAsync(OrderType orderType)
+    {
+        return await _orderRepository.GetByTypeAsync(orderType);
+    }
+
+    public async Task<List<OrderEntity>> GetOrdersByPhoneAsync(string phone)
+    {
+        return await _orderRepository.GetByPhoneAsync(phone);
+    }
 }

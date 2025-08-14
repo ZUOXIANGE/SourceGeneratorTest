@@ -1,11 +1,13 @@
 using System.ComponentModel;
 using NetEscapades.EnumGenerators;
+using AutoDbSetGenerators;
 
 namespace Core.Entities;
 
 /// <summary>
 /// 订单
 /// </summary>
+[AutoDbSet(Name = "Orders")]
 public class OrderEntity
 {
     /// <summary>
