@@ -330,3 +330,5 @@ __pycache__/
 # API approval files
 *.received.txt
 *.db
+*.db-shm
+*.db-wal

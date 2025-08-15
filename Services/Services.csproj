@@ -11,6 +11,7 @@
     <PackageReference Include="AutoCtor" Version="2.8.1" ExcludeAssets="runtime" />
     <!--<PackageReference Include="AutoCtor" Version="2.8.0" PrivateAssets="all" ExcludeAssets="runtime" />-->
     <PackageReference Include="Injectio" Version="5.0.0" PrivateAssets="all" />
+    <PackageReference Include="Mediator.Abstractions" Version="3.0.*" />
     <PackageReference Include="ServiceScan.SourceGenerator" Version="2.2.1" PrivateAssets="all" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

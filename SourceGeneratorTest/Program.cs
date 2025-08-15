@@ -9,6 +9,7 @@ using Repositories;
 using Serilog.Exceptions;
 using Core.Options;
 using Core.Data;
+using Mediator;
 
 
 Console.Title = "SourceGenerator相关框架测试";
@@ -69,6 +70,23 @@ try
 
     // 添加数据库服务
     builder.Services.AddDatabase(builder.Configuration);
+
+    // 配置 Mediator 服务
+    builder.Services.AddMediator(o =>
+    {
+        o.ServiceLifetime = ServiceLifetime.Scoped; // 设置 Mediator 服务的生命周期
+        o.NotificationPublisherType = typeof(TaskWhenAllPublisher); // 设置通知发布器类型
+    });
+
+    // 手动注册 Mediator 处理器为作用域服务
+    builder.Services.AddScoped<IRequestHandler<Core.Dtos.Mediator.CreateProductCommand, Guid>, Services.Handlers.CreateProductCommandHandler>();
+    builder.Services.AddScoped<IRequestHandler<Core.Dtos.Mediator.GetProductQuery, Core.Dtos.ProductDto>, Services.Handlers.GetProductQueryHandler>();
+    builder.Services.AddScoped<IRequestHandler<Core.Dtos.Mediator.GetAllProductsQuery, List<Core.Dtos.ProductDto>>, Services.Handlers.GetAllProductsQueryHandler>();
+    
+    // 注册通知处理器（广播）
+    builder.Services.AddScoped<INotificationHandler<Core.Dtos.Mediator.ProductCreatedNotification>, Services.Handlers.ProductCreatedLogHandler>();
+    builder.Services.AddScoped<INotificationHandler<Core.Dtos.Mediator.ProductCreatedNotification>, Services.Handlers.ProductCreatedEmailHandler>();
+    builder.Services.AddScoped<INotificationHandler<Core.Dtos.Mediator.ProductCreatedNotification>, Services.Handlers.ProductCreatedCacheHandler>();
 
     // 添加自定义服务
     //builder.Services.AddScoped<IProductService, ProductService>();
