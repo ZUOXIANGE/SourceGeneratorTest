@@ -1,18 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- 这里测试下传递依赖,这样就不用在被依赖项目中再次引用AutoCtor -->
-    <PackageReference Include="AutoCtor" Version="2.8.1" ExcludeAssets="runtime" />
+    <PackageReference Include="AutoCtor" Version="2.8.2" ExcludeAssets="runtime" />
     <!--<PackageReference Include="AutoCtor" Version="2.8.0" PrivateAssets="all" ExcludeAssets="runtime" />-->
-    <PackageReference Include="Injectio" Version="5.0.0" PrivateAssets="all" />
+    <PackageReference Include="Injectio" Version="5.1.0" PrivateAssets="all" />
     <PackageReference Include="Mediator.Abstractions" Version="3.0.*" />
-    <PackageReference Include="ServiceScan.SourceGenerator" Version="2.3.2" PrivateAssets="all" ExcludeAssets="runtime">
+    <PackageReference Include="ServiceScan.SourceGenerator" Version="2.4.1" PrivateAssets="all" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
