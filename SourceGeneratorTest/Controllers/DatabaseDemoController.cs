@@ -11,21 +11,12 @@ namespace SourceGeneratorTest.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class DatabaseDemoController : ControllerBase
+[AutoConstruct]
+public partial class DatabaseDemoController : ControllerBase
 {
     private readonly IProductService _productService;
     private readonly IOrderService _orderService;
     private readonly ILogger<DatabaseDemoController> _logger;
-
-    public DatabaseDemoController(
-        IProductService productService,
-        IOrderService orderService,
-        ILogger<DatabaseDemoController> logger)
-    {
-        _productService = productService;
-        _orderService = orderService;
-        _logger = logger;
-    }
 
     #region 产品相关API
 

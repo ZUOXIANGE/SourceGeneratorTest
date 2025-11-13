@@ -11,16 +11,11 @@ namespace SourceGeneratorTest.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class MediatorController : ControllerBase
+[AutoConstruct]
+public partial class MediatorController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly ILogger<MediatorController> _logger;
-
-    public MediatorController(IMediator mediator, ILogger<MediatorController> logger)
-    {
-        _mediator = mediator;
-        _logger = logger;
-    }
 
     /// <summary>
     /// 通过 Mediator 创建产品
@@ -105,7 +100,7 @@ public class MediatorController : ControllerBase
             Timestamp = DateTime.UtcNow
         });
     }
-    
+
     /// <summary>
     /// 发送广播通知示例
     /// </summary>
@@ -117,7 +112,7 @@ public class MediatorController : ControllerBase
     {
         var notification = new ProductCreatedNotification(request.ProductId, request.Name, request.Price);
         await _mediator.Publish(notification);
-        
+
         return Ok(new { Message = "广播通知已发送", Timestamp = DateTime.UtcNow });
     }
 }
