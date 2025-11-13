@@ -3,6 +3,7 @@ using Core.Dtos.Mediator;
 using Mediator;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace SourceGeneratorTest.Controllers;
 
 /// <summary>
@@ -92,6 +93,7 @@ public class MediatorController : ControllerBase
     /// <summary>
     /// Mediator 健康检查
     /// </summary>
+    /// <remarks>检查 Mediator 集成是否正常工作，返回健康状态。</remarks>
     /// <returns>状态信息</returns>
     [HttpGet("health")]
     public ActionResult<object> HealthCheck()

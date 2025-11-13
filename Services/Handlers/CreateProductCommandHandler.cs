@@ -1,6 +1,5 @@
 using Mediator;
 using Core.Dtos.Mediator;
-using Core.Dtos.Mappers;
 using Core.Entities;
 using Microsoft.Extensions.Logging;
 using Repositories;

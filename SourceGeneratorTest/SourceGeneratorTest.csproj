@@ -26,7 +26,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Mediator.Abstractions" Version="3.0.*" />
-    <PackageReference Include="Scrutor" Version="6.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.10.3" />
+    <!-- <PackageReference Include="Scrutor" Version="6.1.0" /> -->
     <PackageReference Include="Serilog" Version="4.3.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
@@ -34,7 +36,6 @@
     <PackageReference Include="Serilog.Sinks.Async" Version="2.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>

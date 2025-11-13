@@ -4,6 +4,9 @@ using Services;
 
 namespace SourceGeneratorTest.Controllers;
 
+/// <summary>
+/// 产品管理
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [AutoConstruct(GuardSetting.Enabled)]
@@ -15,6 +18,7 @@ public partial class ProductController : ControllerBase
     /// <summary>
     /// 创建产品
     /// </summary>
+    /// <remarks>创建一个新产品，返回其唯一标识 ID。</remarks>
     /// <param name="req"></param>
     /// <returns></returns>
     [HttpPost]
@@ -35,6 +39,7 @@ public partial class ProductController : ControllerBase
     /// <summary>
     /// 获取产品
     /// </summary>
+    /// <remarks>根据产品 ID 获取产品详情。</remarks>
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
@@ -59,6 +64,7 @@ public partial class ProductController : ControllerBase
     /// <summary>
     /// 获取所有产品
     /// </summary>
+    /// <remarks>分页或列表返回所有可用产品的信息。</remarks>
     /// <returns></returns>
     [HttpGet]
     public async Task<ActionResult<List<ProductDto>>> GetAllProductsAsync()
@@ -78,6 +84,7 @@ public partial class ProductController : ControllerBase
     /// <summary>
     /// 删除产品
     /// </summary>
+    /// <remarks>根据产品 ID 删除指定产品。</remarks>
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]

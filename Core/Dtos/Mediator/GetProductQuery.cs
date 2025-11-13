@@ -1,5 +1,4 @@
 using Mediator;
-using Core.Dtos;
 
 namespace Core.Dtos.Mediator;
 

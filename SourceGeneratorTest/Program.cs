@@ -10,6 +10,7 @@ using Serilog.Exceptions;
 using Core.Options;
 using Core.Data;
 using Mediator;
+using Scalar.AspNetCore;
 
 
 Console.Title = "SourceGenerator相关框架测试";
@@ -46,9 +47,10 @@ try
     {
         options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
     });
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    // 使用内置 OpenAPI 支持并由 Scalar 提供 UI，并补充枚举的中文描述
+    builder.Services.AddOpenApi(options =>
+    {
+    });
     builder.Services.Configure<TestOptions>(builder.Configuration);
 
     // 注册HTTP日志记录服务
@@ -78,15 +80,15 @@ try
         o.NotificationPublisherType = typeof(TaskWhenAllPublisher); // 设置通知发布器类型
     });
 
-    // 手动注册 Mediator 处理器为作用域服务
-    builder.Services.AddScoped<IRequestHandler<Core.Dtos.Mediator.CreateProductCommand, Guid>, Services.Handlers.CreateProductCommandHandler>();
-    builder.Services.AddScoped<IRequestHandler<Core.Dtos.Mediator.GetProductQuery, Core.Dtos.ProductDto>, Services.Handlers.GetProductQueryHandler>();
-    builder.Services.AddScoped<IRequestHandler<Core.Dtos.Mediator.GetAllProductsQuery, List<Core.Dtos.ProductDto>>, Services.Handlers.GetAllProductsQueryHandler>();
-    
-    // 注册通知处理器（广播）
-    builder.Services.AddScoped<INotificationHandler<Core.Dtos.Mediator.ProductCreatedNotification>, Services.Handlers.ProductCreatedLogHandler>();
-    builder.Services.AddScoped<INotificationHandler<Core.Dtos.Mediator.ProductCreatedNotification>, Services.Handlers.ProductCreatedEmailHandler>();
-    builder.Services.AddScoped<INotificationHandler<Core.Dtos.Mediator.ProductCreatedNotification>, Services.Handlers.ProductCreatedCacheHandler>();
+    //// 手动注册 Mediator 处理器为作用域服务
+    //builder.Services.AddScoped<IRequestHandler<Core.Dtos.Mediator.CreateProductCommand, Guid>, Services.Handlers.CreateProductCommandHandler>();
+    //builder.Services.AddScoped<IRequestHandler<Core.Dtos.Mediator.GetProductQuery, Core.Dtos.ProductDto>, Services.Handlers.GetProductQueryHandler>();
+    //builder.Services.AddScoped<IRequestHandler<Core.Dtos.Mediator.GetAllProductsQuery, List<Core.Dtos.ProductDto>>, Services.Handlers.GetAllProductsQueryHandler>();
+
+    //// 注册通知处理器（广播）
+    //builder.Services.AddScoped<INotificationHandler<Core.Dtos.Mediator.ProductCreatedNotification>, Services.Handlers.ProductCreatedLogHandler>();
+    //builder.Services.AddScoped<INotificationHandler<Core.Dtos.Mediator.ProductCreatedNotification>, Services.Handlers.ProductCreatedEmailHandler>();
+    //builder.Services.AddScoped<INotificationHandler<Core.Dtos.Mediator.ProductCreatedNotification>, Services.Handlers.ProductCreatedCacheHandler>();
 
     // 添加自定义服务
     //builder.Services.AddScoped<IProductService, ProductService>();
@@ -117,8 +119,18 @@ try
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
-        app.UseSwagger();
-        app.UseSwaggerUI();
+        app.MapOpenApi();
+        var devUrl = builder.Configuration["urls"];
+        app.MapScalarApiReference(options =>
+        {
+            options.DarkMode = true;
+            options.DefaultHttpClient = new KeyValuePair<ScalarTarget, ScalarClient>(ScalarTarget.CSharp, ScalarClient.HttpClient);
+            options.Theme = ScalarTheme.DeepSpace;
+            if (!string.IsNullOrWhiteSpace(devUrl))
+            {
+                options.AddServer(devUrl, "开发环境");
+            }
+        });
     }
 
     app.UseHttpLogging();

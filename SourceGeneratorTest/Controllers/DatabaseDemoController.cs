@@ -32,6 +32,7 @@ public class DatabaseDemoController : ControllerBase
     /// <summary>
     /// 获取所有产品
     /// </summary>
+    /// <remarks>返回所有产品实体列表，用于演示数据库访问。</remarks>
     [HttpGet("products")]
     public async Task<ActionResult<List<ProductEntity>>> GetAllProducts()
     {
@@ -50,6 +51,7 @@ public class DatabaseDemoController : ControllerBase
     /// <summary>
     /// 根据ID获取产品
     /// </summary>
+    /// <remarks>根据产品唯一标识 ID 查询产品实体详情。</remarks>
     [HttpGet("products/{id}")]
     public async Task<ActionResult<ProductEntity>> GetProduct(Guid id)
     {
@@ -71,6 +73,7 @@ public class DatabaseDemoController : ControllerBase
     /// <summary>
     /// 创建产品
     /// </summary>
+    /// <remarks>创建一个产品实体并返回其详情。</remarks>
     [HttpPost("products")]
     public async Task<ActionResult<ProductEntity>> CreateProduct([FromBody] CreateProductReq request)
     {
@@ -91,6 +94,7 @@ public class DatabaseDemoController : ControllerBase
     /// <summary>
     /// 根据分类获取产品
     /// </summary>
+    /// <remarks>根据枚举分类筛选产品列表（含中文枚举说明）。</remarks>
     [HttpGet("products/category/{category}")]
     public async Task<ActionResult<List<ProductEntity>>> GetProductsByCategory(ProductCategory category)
     {
@@ -113,6 +117,7 @@ public class DatabaseDemoController : ControllerBase
     /// <summary>
     /// 获取所有订单
     /// </summary>
+    /// <remarks>返回所有订单实体列表，用于演示数据库访问。</remarks>
     [HttpGet("orders")]
     public async Task<ActionResult<List<OrderEntity>>> GetAllOrders()
     {
@@ -131,6 +136,7 @@ public class DatabaseDemoController : ControllerBase
     /// <summary>
     /// 根据ID获取订单
     /// </summary>
+    /// <remarks>根据订单唯一标识 ID 查询订单实体详情。</remarks>
     [HttpGet("orders/{id}")]
     public async Task<ActionResult<OrderEntity>> GetOrder(Guid id)
     {
@@ -152,6 +158,7 @@ public class DatabaseDemoController : ControllerBase
     /// <summary>
     /// 创建订单
     /// </summary>
+    /// <remarks>创建一个订单实体并返回其详情。</remarks>
     [HttpPost("orders")]
     public async Task<ActionResult<OrderEntity>> CreateOrder([FromBody] CreateOrderReq request)
     {
@@ -172,6 +179,7 @@ public class DatabaseDemoController : ControllerBase
     /// <summary>
     /// 根据类型获取订单
     /// </summary>
+    /// <remarks>根据订单类型筛选订单列表（含中文枚举说明）。</remarks>
     [HttpGet("orders/type/{orderType}")]
     public async Task<ActionResult<List<OrderEntity>>> GetOrdersByType(OrderType orderType)
     {
