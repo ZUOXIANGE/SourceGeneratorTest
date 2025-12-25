@@ -1,5 +1,9 @@
+using System.ComponentModel;
+using System.Reflection;
+using Core.Dtos;
 using Core.Entities;
 using Riok.Mapperly.Abstractions;
+using NetEscapades.EnumGenerators;
 
 namespace Core.Dtos.Mappers;
 
@@ -27,6 +31,10 @@ public partial class ProductMapper
     private static string MapProductCategory(ProductCategory category)
     {
         return category.ToStringFast(true);
+        //var fieldInfo = category.GetType().GetField(category.ToString());
+        //if (fieldInfo == null) return category.ToString();
+        //var attributes = (DescriptionAttribute[])fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
+        //return attributes.Length > 0 ? attributes[0].Description : category.ToString();
     }
 }
 

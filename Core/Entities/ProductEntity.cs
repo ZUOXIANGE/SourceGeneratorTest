@@ -46,7 +46,7 @@ public class ProductEntity
     public bool IsAvailable { get; set; } = true;
 }
 
-[EnumExtensions]
+[EnumExtensions(MetadataSource = MetadataSource.DescriptionAttribute)]
 public enum ProductCategory
 {
     /// <summary>

@@ -50,7 +50,7 @@ public class AddressDto
 
 }
 
-[EnumExtensions]
+[EnumExtensions(MetadataSource = MetadataSource.DescriptionAttribute)]
 public enum OrderType
 {
     /// <summary>
