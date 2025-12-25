@@ -11,24 +11,24 @@
   <ItemGroup>
     <!--PrivateAssets 属性指定哪些资产（如编译符号、内容文件等）不会传递给引用当前项目的其他项目-->
     <!--ExcludeAssets 属性指定哪些资产类型不会被包含在项目的最终输出（如发布包）中-->
-    <PackageReference Include="Atulin.AutoDbSet" Version="1.1.3">
+    <PackageReference Include="Atulin.AutoDbSet">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
 
-    <PackageReference Include="AutoCtor" Version="2.8.2" PrivateAssets="all" ExcludeAssets="runtime">
+    <PackageReference Include="AutoCtor" PrivateAssets="all" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Mediator.Abstractions" Version="3.0.*" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.0" />
-    <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta16" PrivateAssets="all" ExcludeAssets="runtime">
+    <PackageReference Include="Mediator.Abstractions" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="NetEscapades.EnumGenerators" PrivateAssets="all" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Riok.Mapperly" Version="4.3.0" ExcludeAssets="runtime" PrivateAssets="all">
+    <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" PrivateAssets="all">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="ServiceScan.SourceGenerator" Version="2.4.1">
+    <PackageReference Include="ServiceScan.SourceGenerator">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

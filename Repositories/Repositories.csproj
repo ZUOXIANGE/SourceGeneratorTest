@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoCtor" Version="2.8.2" PrivateAssets="all" ExcludeAssets="runtime">
+    <PackageReference Include="AutoCtor" PrivateAssets="all" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <!--<PackageReference Include="Injectio" Version="5.0.0" PrivateAssets="all" />-->
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.0" />
-    <PackageReference Include="ServiceScan.SourceGenerator" Version="2.4.1">
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
+    <PackageReference Include="ServiceScan.SourceGenerator">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

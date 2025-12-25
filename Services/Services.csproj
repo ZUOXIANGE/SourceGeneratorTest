@@ -8,11 +8,11 @@
 
   <ItemGroup>
     <!-- 这里测试下传递依赖,这样就不用在被依赖项目中再次引用AutoCtor -->
-    <PackageReference Include="AutoCtor" Version="2.8.2" ExcludeAssets="runtime" />
+    <PackageReference Include="AutoCtor" ExcludeAssets="runtime" />
     <!--<PackageReference Include="AutoCtor" Version="2.8.0" PrivateAssets="all" ExcludeAssets="runtime" />-->
-    <PackageReference Include="Injectio" Version="5.1.0" PrivateAssets="all" />
-    <PackageReference Include="Mediator.Abstractions" Version="3.0.*" />
-    <PackageReference Include="ServiceScan.SourceGenerator" Version="2.4.1" PrivateAssets="all" ExcludeAssets="runtime">
+    <PackageReference Include="Injectio" PrivateAssets="all" />
+    <PackageReference Include="Mediator.Abstractions" />
+    <PackageReference Include="ServiceScan.SourceGenerator" PrivateAssets="all" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>

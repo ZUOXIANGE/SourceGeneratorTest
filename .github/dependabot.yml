@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/Core"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "nuget"
+    directory: "/Repositories"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "nuget"
+    directory: "/Services"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "nuget"
+    directory: "/SourceGeneratorTest"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "nuget"
+    directory: "/Tests"
+    schedule:
+      interval: "daily"
