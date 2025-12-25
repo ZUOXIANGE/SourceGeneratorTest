@@ -1,5 +1,9 @@
 # SourceGeneratorTest
 
+[![.NET Build and Test](https://github.com/ZUOXIANGE/SourceGeneratorTest/actions/workflows/dotnet.yml/badge.svg)](https://github.com/ZUOXIANGE/SourceGeneratorTest/actions/workflows/dotnet.yml)
+[![.NET Version](https://img.shields.io/badge/.NET-10.0-purple.svg)](https://dotnet.microsoft.com/download/dotnet/10.0)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 一个用于演示和测试各种 .NET 源代码生成器框架的示例项目。本项目展示了如何在现代 .NET 10 应用程序中使用多种源代码生成器来提高开发效率和代码质量。
 
 ## 🚀 项目特性
