@@ -22,7 +22,7 @@
     <PackageReference Include="Mediator.Abstractions" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
-    <PackageReference Include="NetEscapades.EnumGenerators" PrivateAssets="all" ExcludeAssets="runtime">
+    <PackageReference Include="NetEscapades.EnumGenerators" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" PrivateAssets="all">
