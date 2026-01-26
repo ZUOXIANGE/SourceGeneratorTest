@@ -23,6 +23,6 @@
     <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageVersion Include="ServiceScan.SourceGenerator" Version="2.4.1" />
-    <PackageVersion Include="TUnit" Version="1.12.15" />
+    <PackageVersion Include="TUnit" Version="1.12.53" />
   </ItemGroup>
 </Project>
