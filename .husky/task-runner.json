@@ -6,7 +6,7 @@
          "group": "pre-commit",
          "command": "dotnet",
          "args": [
-            "dotnet-format",
+            "format",
             "--include",
             "${staged}"
          ],
