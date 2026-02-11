@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
     <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
 
