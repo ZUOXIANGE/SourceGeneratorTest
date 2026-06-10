@@ -5,6 +5,23 @@ updates:
     schedule:
       interval: "daily"
     open-pull-requests-limit: 10
+    groups:
+      microsoft-packages:
+        patterns:
+          - "Microsoft.*"
+      serilog-packages:
+        patterns:
+          - "Serilog.*"
+      mediator-packages:
+        patterns:
+          - "Mediator.*"
+      other-packages:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "Microsoft.*"
+          - "Serilog.*"
+          - "Mediator.*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
