@@ -3,7 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Atulin.AutoDbSet" Version="1.2.1" />
+    <PackageVersion Include="Atulin.AutoDbSet" Version="1.2.2" />
     <PackageVersion Include="AutoCtor" Version="3.1.0" />
     <PackageVersion Include="Injectio" Version="6.1.0" />
     <PackageVersion Include="Mediator.Abstractions" Version="3.0.2" />
