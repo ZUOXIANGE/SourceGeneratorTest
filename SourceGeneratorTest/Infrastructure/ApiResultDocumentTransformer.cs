@@ -25,12 +25,26 @@ public static class ApiResultDocumentTransformer
                     continue;
 
                 var content = response.Content;
-                if (content is null)
+                if (content is null || content.Count == 0)
                     continue;
 
-                var dataSchema = content.Values
-                    .Select(mediaType => mediaType.Schema)
-                    .FirstOrDefault(schema => schema is not null);
+                var jsonMediaType = content
+                    .FirstOrDefault(item => item.Key.StartsWith("application/json", StringComparison.OrdinalIgnoreCase))
+                    .Value;
+
+                // 文件下载等非 JSON 响应不包装成统一响应，仅标注为二进制
+                if (jsonMediaType is null)
+                {
+                    foreach (var (mediaTypeName, mediaType) in content)
+                    {
+                        if (mediaTypeName.Contains("octet-stream", StringComparison.OrdinalIgnoreCase))
+                            mediaType.Schema = new OpenApiSchema { Type = JsonSchemaType.String, Format = "binary" };
+                    }
+
+                    continue;
+                }
+
+                var dataSchema = jsonMediaType.Schema;
 
                 // 过滤器统一输出 application/json，这里同步修正文档中的响应类型
                 content.Clear();

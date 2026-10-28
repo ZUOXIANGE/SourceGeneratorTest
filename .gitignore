@@ -332,3 +332,7 @@ __pycache__/
 *.db
 *.db-shm
 *.db-wal
+
+# 文件上传目录
+SourceGeneratorTest/App_Data/
+

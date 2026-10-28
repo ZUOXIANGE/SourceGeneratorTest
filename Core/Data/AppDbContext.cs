@@ -46,6 +46,15 @@ public partial class AppDbContext : DbContext
                     v => JsonSerializer.Deserialize<AddressDto>(v, (JsonSerializerOptions)null!));
         });
 
+        // 配置FileRecordEntity
+        modelBuilder.Entity<FileRecordEntity>(entity =>
+        {
+            entity.HasKey(e => e.FileId);
+            entity.Property(e => e.FileName).IsRequired().HasMaxLength(260);
+            entity.Property(e => e.StoredPath).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.ContentType).HasMaxLength(200);
+        });
+
         // 添加种子数据
         SeedData(modelBuilder);
     }

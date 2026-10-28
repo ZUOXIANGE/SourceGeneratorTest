@@ -10,6 +10,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json.Nodes;
 using System.Text.Unicode;
 using Microsoft.OpenApi;
+using Microsoft.AspNetCore.Http.Features;
 using Repositories;
 using Serilog.Exceptions;
 using Core.Options;
@@ -54,6 +55,13 @@ try
     builder.Services.ConfigureHttpJsonOptions(options =>
     {
         options.SerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+    });
+
+    // 上传文件大小限制与 Kestrel/表单配置保持一致
+    var maxUploadSizeMB = builder.Configuration.GetValue<int?>("FileStorage:MaxSizeMB") ?? 20;
+    builder.Services.Configure<FormOptions>(options =>
+    {
+        options.MultipartBodyLengthLimit = maxUploadSizeMB * 1024L * 1024L;
     });
     // 使用内置 OpenAPI 支持并由 Scalar 提供 UI，并补充枚举的中文描述
     builder.Services.AddOpenApi(options =>
@@ -140,6 +148,13 @@ try
     builder.Services.AddRepositories();
     //使用CustomHandler实现配置注入
     builder.Services.AddCustomOptions(builder.Configuration);
+
+    //把文件存储的相对路径解析为基于内容根目录的绝对路径
+    builder.Services.PostConfigure<FileStorageOptions>(options =>
+    {
+        if (!Path.IsPathRooted(options.RootPath))
+            options.RootPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, options.RootPath));
+    });
 
     //使用反射扫描注入
     //builder.Services.AddScoped<IOrderRepository, OrderRepository>();
