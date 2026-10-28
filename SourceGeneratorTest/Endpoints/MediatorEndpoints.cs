@@ -1,6 +1,7 @@
 using Core.Dtos;
 using Core.Dtos.Mediator;
 using Mediator;
+using Microsoft.AspNetCore.Mvc;
 using SourceGeneratorTest.Infrastructure;
 
 namespace SourceGeneratorTest.Endpoints;
@@ -36,35 +37,28 @@ public class MediatorEndpoints : IEndpoint
     }
 
     private static async Task<Guid> CreateProductAsync(
-        CreateProductCommand command,
-        IMediator mediator,
-        ILogger<MediatorEndpoints> logger)
+        [FromBody] CreateProductCommand command,
+        [FromServices] IMediator mediator,
+        [FromServices] ILogger<MediatorEndpoints> logger)
     {
         logger.LogInformation("Creating product via Mediator: {ProductName}", command.Name);
         return await mediator.Send(command);
     }
 
-    private static async Task<ProductDto> GetProductAsync(Guid id, IMediator mediator)
-    {
-        try
-        {
-            return await mediator.Send(new GetProductQuery(id));
-        }
-        catch (ArgumentNullException)
-        {
-            throw new ApiException(StatusCodes.Status404NotFound, "产品不存在");
-        }
-    }
+    private static async Task<ProductDto> GetProductAsync(
+        [FromRoute] Guid id,
+        [FromServices] IMediator mediator)
+        => await mediator.Send(new GetProductQuery(id));
 
-    private static async Task<List<ProductDto>> GetAllProductsAsync(IMediator mediator)
+    private static async Task<List<ProductDto>> GetAllProductsAsync([FromServices] IMediator mediator)
         => await mediator.Send(new GetAllProductsQuery());
 
     private static MediatorHealthResponse HealthCheck()
         => new("Healthy", "Mediator integration is working properly", DateTime.UtcNow);
 
     private static async Task<BroadcastNotificationResponse> BroadcastNotification(
-        BroadcastRequest request,
-        IMediator mediator)
+        [FromBody] BroadcastRequest request,
+        [FromServices] IMediator mediator)
     {
         var notification = new ProductCreatedNotification(request.ProductId, request.Name, request.Price);
         await mediator.Publish(notification);

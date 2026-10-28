@@ -42,8 +42,8 @@ public interface IProductService
     /// 根据ID获取产品实体
     /// </summary>
     /// <param name="id"></param>
-    /// <returns></returns>
-    Task<ProductEntity?> GetProductByIdAsync(Guid id);
+    /// <returns>产品实体，不存在时抛出 <see cref="Core.Exceptions.ApiException"/></returns>
+    Task<ProductEntity> GetProductByIdAsync(Guid id);
 
     /// <summary>
     /// 创建产品实体

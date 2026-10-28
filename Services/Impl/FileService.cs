@@ -2,6 +2,7 @@ using AutoCtor;
 using Core.Data;
 using Core.Dtos;
 using Core.Entities;
+using Core.Exceptions;
 using Core.Options;
 using Injectio;
 using Microsoft.EntityFrameworkCore;
@@ -57,37 +58,40 @@ public partial class FileService : IFileService
     }
 
     /// <inheritdoc />
-    public async Task<FileDto?> GetAsync(Guid fileId)
+    public async Task<FileDto> GetAsync(Guid fileId)
     {
         var entity = await _dbContext.FileRecords
             .AsNoTracking()
             .FirstOrDefaultAsync(entity => entity.FileId == fileId);
 
-        return entity is null ? null : ToDto(entity);
+        return entity is null
+            ? throw new ApiException(404, "文件不存在")
+            : ToDto(entity);
     }
 
     /// <inheritdoc />
-    public async Task<FileDownload?> GetDownloadAsync(Guid fileId)
+    public async Task<FileDownload> GetDownloadAsync(Guid fileId)
     {
         var entity = await _dbContext.FileRecords
             .AsNoTracking()
             .FirstOrDefaultAsync(entity => entity.FileId == fileId);
         if (entity is null)
-            return null;
+            throw new ApiException(404, "文件不存在");
 
         var fullPath = Path.Combine(_optionsMonitor.CurrentValue.RootPath, entity.StoredPath);
-        return File.Exists(fullPath)
-            ? new FileDownload(fullPath, entity.FileName, entity.ContentType)
-            : null;
+        if (!File.Exists(fullPath))
+            throw new ApiException(404, "文件不存在");
+
+        return new FileDownload(fullPath, entity.FileName, entity.ContentType);
     }
 
     /// <inheritdoc />
-    public async Task<bool> DeleteAsync(Guid fileId)
+    public async Task DeleteAsync(Guid fileId)
     {
         var entity = await _dbContext.FileRecords
             .FirstOrDefaultAsync(entity => entity.FileId == fileId);
         if (entity is null)
-            return false;
+            throw new ApiException(404, "文件不存在");
 
         _dbContext.FileRecords.Remove(entity);
         await _dbContext.SaveChangesAsync();
@@ -97,7 +101,6 @@ public partial class FileService : IFileService
             File.Delete(fullPath);
 
         _logger.LogInformation("文件已删除: {FileId}", fileId);
-        return true;
     }
 
     private static FileDto ToDto(FileRecordEntity entity) => new()

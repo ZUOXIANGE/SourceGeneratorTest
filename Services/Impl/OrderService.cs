@@ -2,6 +2,7 @@ using AutoCtor;
 using Core.Dtos;
 using Core.Dtos.Mappers;
 using Core.Entities;
+using Core.Exceptions;
 using Microsoft.Extensions.Logging;
 using Repositories;
 
@@ -34,7 +35,7 @@ public partial class OrderService : IOrderService
     {
         var order = await _orderRepository.GetByIdAsync(id);
         if (order == null)
-            throw new ArgumentNullException(nameof(order));
+            throw new ApiException(404, "订单不存在");
 
         var orderClone = new CloneGenerator().Clone(order);
         var clone2 = order.Clone();
@@ -52,9 +53,10 @@ public partial class OrderService : IOrderService
         return await _orderRepository.GetAllAsync();
     }
 
-    public async Task<OrderEntity?> GetOrderByIdAsync(Guid id)
+    public async Task<OrderEntity> GetOrderByIdAsync(Guid id)
     {
-        return await _orderRepository.GetByIdAsync(id);
+        return await _orderRepository.GetByIdAsync(id)
+               ?? throw new ApiException(404, "订单不存在");
     }
 
     public async Task<OrderEntity> CreateOrderEntityAsync(OrderEntity order)

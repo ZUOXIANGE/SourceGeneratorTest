@@ -1,4 +1,5 @@
 using Core.Dtos;
+using Microsoft.AspNetCore.Mvc;
 using Services;
 using SourceGeneratorTest.Infrastructure;
 
@@ -30,25 +31,22 @@ public class ProductEndpoints : IEndpoint
             .WithDescription("根据产品 ID 删除指定产品。");
     }
 
-    private static Task<Guid> CreateProductAsync(CreateProductReq req, IProductService productService)
-        => productService.CreateProductAsync(req);
+    private static Task<Guid> CreateProductAsync(
+        [FromBody] CreateProductReq body,
+        [FromServices] IProductService productService)
+        => productService.CreateProductAsync(body);
 
-    private static async Task<ProductDto> GetProductAsync(Guid id, IProductService productService)
-    {
-        try
-        {
-            return await productService.GetProductAsync(id);
-        }
-        catch (ArgumentNullException)
-        {
-            throw new ApiException(StatusCodes.Status404NotFound, "产品不存在");
-        }
-    }
+    private static Task<ProductDto> GetProductAsync(
+        [FromRoute] Guid id,
+        [FromServices] IProductService productService)
+        => productService.GetProductAsync(id);
 
-    private static Task<List<ProductDto>> GetAllProductsAsync(IProductService productService)
+    private static Task<List<ProductDto>> GetAllProductsAsync([FromServices] IProductService productService)
         => productService.GetAllProductsAsync();
 
-    private static async Task<bool> DeleteProductAsync(Guid id, IProductService productService)
+    private static async Task<bool> DeleteProductAsync(
+        [FromRoute] Guid id,
+        [FromServices] IProductService productService)
     {
         await productService.DeleteProductAsync(id);
         return true;

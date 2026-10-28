@@ -1,6 +1,7 @@
 using Core.Dtos;
 using Core.Dtos.Mappers;
 using Core.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Services;
 using SourceGeneratorTest.Infrastructure;
 
@@ -56,33 +57,39 @@ public class DatabaseDemoEndpoints : IEndpoint
         #endregion
     }
 
-    private static Task<List<ProductEntity>> GetAllProductsAsync(IProductService productService)
+    private static Task<List<ProductEntity>> GetAllProductsAsync([FromServices] IProductService productService)
         => productService.GetAllProductEntitiesAsync();
 
-    private static async Task<ProductEntity> GetProductAsync(Guid id, IProductService productService)
-    {
-        var product = await productService.GetProductByIdAsync(id);
-        return product ?? throw new ApiException(StatusCodes.Status404NotFound, $"未找到ID为{id}的产品");
-    }
+    private static Task<ProductEntity> GetProductAsync(
+        [FromRoute] Guid id,
+        [FromServices] IProductService productService)
+        => productService.GetProductByIdAsync(id);
 
-    private static Task<ProductEntity> CreateProductAsync(CreateProductReq request, IProductService productService)
-        => productService.CreateProductEntityAsync(request.ToEntity());
+    private static Task<ProductEntity> CreateProductAsync(
+        [FromBody] CreateProductReq body,
+        [FromServices] IProductService productService)
+        => productService.CreateProductEntityAsync(body.ToEntity());
 
-    private static Task<List<ProductEntity>> GetProductsByCategoryAsync(ProductCategory category, IProductService productService)
+    private static Task<List<ProductEntity>> GetProductsByCategoryAsync(
+        [FromRoute] ProductCategory category,
+        [FromServices] IProductService productService)
         => productService.GetProductsByCategoryAsync(category);
 
-    private static Task<List<OrderEntity>> GetAllOrdersAsync(IOrderService orderService)
+    private static Task<List<OrderEntity>> GetAllOrdersAsync([FromServices] IOrderService orderService)
         => orderService.GetAllOrdersAsync();
 
-    private static async Task<OrderEntity> GetOrderAsync(Guid id, IOrderService orderService)
-    {
-        var order = await orderService.GetOrderByIdAsync(id);
-        return order ?? throw new ApiException(StatusCodes.Status404NotFound, $"未找到ID为{id}的订单");
-    }
+    private static Task<OrderEntity> GetOrderAsync(
+        [FromRoute] Guid id,
+        [FromServices] IOrderService orderService)
+        => orderService.GetOrderByIdAsync(id);
 
-    private static Task<OrderEntity> CreateOrderAsync(CreateOrderReq request, IOrderService orderService)
-        => orderService.CreateOrderEntityAsync(request.ToEntity());
+    private static Task<OrderEntity> CreateOrderAsync(
+        [FromBody] CreateOrderReq body,
+        [FromServices] IOrderService orderService)
+        => orderService.CreateOrderEntityAsync(body.ToEntity());
 
-    private static Task<List<OrderEntity>> GetOrdersByTypeAsync(OrderType orderType, IOrderService orderService)
+    private static Task<List<OrderEntity>> GetOrdersByTypeAsync(
+        [FromRoute] OrderType orderType,
+        [FromServices] IOrderService orderService)
         => orderService.GetOrdersByTypeAsync(orderType);
 }

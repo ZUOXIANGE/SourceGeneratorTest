@@ -1,5 +1,6 @@
 using Core.Dtos;
 using Core.Options;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Services;
 using SourceGeneratorTest.Infrastructure;
@@ -29,10 +30,10 @@ public class TestEndpoints : IEndpoint
     }
 
     private static string Ping(
-        ILogger<TestEndpoints> logger,
-        IOptionsMonitor<TestOptions> testOptionsMonitor,
-        IOptionsMonitor<OrderOptions> orderOptionsMonitor,
-        IOptions<AppSettings> appSettings)
+        [FromServices] ILogger<TestEndpoints> logger,
+        [FromServices] IOptionsMonitor<TestOptions> testOptionsMonitor,
+        [FromServices] IOptionsMonitor<OrderOptions> orderOptionsMonitor,
+        [FromServices] IOptions<AppSettings> appSettings)
     {
         logger.LogInformation("当前配置1:{@options}", testOptionsMonitor.CurrentValue);
         logger.LogInformation("当前配置2:{@options}", orderOptionsMonitor.CurrentValue);
@@ -41,18 +42,13 @@ public class TestEndpoints : IEndpoint
         return "pong";
     }
 
-    private static Task<Guid> CreateOrderAsync(CreateOrderReq req, IOrderService orderService)
-        => orderService.CreateOrderAsync(req);
+    private static Task<Guid> CreateOrderAsync(
+        [FromBody] CreateOrderReq body,
+        [FromServices] IOrderService orderService)
+        => orderService.CreateOrderAsync(body);
 
-    private static async Task<OrderDto> GetOrderAsync(Guid id, IOrderService orderService)
-    {
-        try
-        {
-            return await orderService.GetOrderAsync(id);
-        }
-        catch (ArgumentNullException)
-        {
-            throw new ApiException(StatusCodes.Status404NotFound, "订单不存在");
-        }
-    }
+    private static Task<OrderDto> GetOrderAsync(
+        Guid id,
+        IOrderService orderService)
+        => orderService.GetOrderAsync(id);
 }

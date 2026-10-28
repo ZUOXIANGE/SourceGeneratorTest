@@ -1,7 +1,7 @@
-namespace SourceGeneratorTest.Infrastructure;
+namespace Core.Exceptions;
 
 /// <summary>
-/// 业务异常，由全局异常中间件转换成统一响应
+/// 业务异常，由宿主层的全局异常中间件转换成统一响应
 /// </summary>
 /// <param name="code">业务状态码</param>
 /// <param name="message">提示信息</param>

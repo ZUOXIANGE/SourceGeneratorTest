@@ -29,8 +29,8 @@ public interface IOrderService
     /// 根据ID获取订单
     /// </summary>
     /// <param name="id"></param>
-    /// <returns></returns>
-    Task<OrderEntity?> GetOrderByIdAsync(Guid id);
+    /// <returns>订单实体，不存在时抛出 <see cref="Core.Exceptions.ApiException"/></returns>
+    Task<OrderEntity> GetOrderByIdAsync(Guid id);
 
     /// <summary>
     /// 创建订单实体

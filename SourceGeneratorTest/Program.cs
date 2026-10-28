@@ -1,5 +1,6 @@
 global using AutoCtor;
 
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpLogging;
 using Serilog.Events;
 using Serilog;
@@ -20,6 +21,7 @@ using Scalar.AspNetCore;
 using SourceGeneratorTest.Endpoints;
 using SourceGeneratorTest.Infrastructure;
 using Core.Dtos;
+using Core.Exceptions;
 
 
 Console.Title = "SourceGenerator相关框架测试";
@@ -190,28 +192,29 @@ try
     app.UseHttpLogging();
 
     //统一异常响应：未处理异常同样返回 HTTP 200，业务状态放在 code 中
-    app.Use(async (context, next) =>
+    app.UseExceptionHandler(new ExceptionHandlerOptions
     {
-        try
+        ExceptionHandler = async context =>
         {
-            await next(context);
-        }
-        catch (ApiException ex)
-        {
-            Log.Warning("业务异常({Code}): {Message}", ex.Code, ex.Message);
-            await Results.Ok(ApiResult<object?>.Failure(ex.Code, ex.Message)).ExecuteAsync(context);
-        }
-        catch (BadHttpRequestException ex)
-        {
-            Log.Warning(ex, "请求参数无效");
-            await Results.Ok(ApiResult<object?>.Failure(StatusCodes.Status400BadRequest, "请求参数无效"))
-                .ExecuteAsync(context);
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "未处理的异常");
-            await Results.Ok(ApiResult<object?>.Failure(StatusCodes.Status500InternalServerError, "服务器内部错误"))
-                .ExecuteAsync(context);
+            var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+
+            var (code, msg) = exception switch
+            {
+                ApiException ex => (ex.Code, ex.Message),
+                BadHttpRequestException => (StatusCodes.Status400BadRequest, "请求参数无效"),
+                _ => (StatusCodes.Status500InternalServerError, "服务器内部错误")
+            };
+
+            if (exception is ApiException apiEx)
+                Log.Warning("业务异常({Code}): {Message}", apiEx.Code, apiEx.Message);
+            else if (exception is BadHttpRequestException badEx)
+                Log.Warning(badEx, "请求参数无效");
+            else
+                Log.Error(exception, "未处理的异常");
+
+            // 异常中间件默认会写入 500 状态码，这里清空后按统一响应输出 HTTP 200
+            context.Response.Clear();
+            await Results.Ok(ApiResult<object?>.Failure(code, msg)).ExecuteAsync(context);
         }
     });
 

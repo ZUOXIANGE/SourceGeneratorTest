@@ -2,6 +2,7 @@ using AutoCtor;
 using Core.Dtos;
 using Core.Dtos.Mappers;
 using Core.Entities;
+using Core.Exceptions;
 using Microsoft.Extensions.Logging;
 using Repositories;
 
@@ -30,7 +31,7 @@ public partial class ProductService : IProductService
     {
         var product = await _productRepository.GetByIdAsync(id);
         if (product == null)
-            throw new ArgumentNullException(nameof(product), "产品不存在");
+            throw new ApiException(404, "产品不存在");
 
         var dto = new ProductMapper().EntityToDto(product);
         _logger.LogInformation("Retrieved product: {@dto}", dto);
@@ -60,9 +61,10 @@ public partial class ProductService : IProductService
         return await _productRepository.GetAllAsync();
     }
 
-    public async Task<ProductEntity?> GetProductByIdAsync(Guid id)
+    public async Task<ProductEntity> GetProductByIdAsync(Guid id)
     {
-        return await _productRepository.GetByIdAsync(id);
+        return await _productRepository.GetByIdAsync(id)
+               ?? throw new ApiException(404, "产品不存在");
     }
 
     public async Task<ProductEntity> CreateProductEntityAsync(ProductEntity product)

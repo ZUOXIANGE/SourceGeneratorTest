@@ -2,6 +2,7 @@ using Mediator;
 using Core.Dtos;
 using Core.Dtos.Mediator;
 using Core.Dtos.Mappers;
+using Core.Exceptions;
 using Microsoft.Extensions.Logging;
 using Repositories;
 
@@ -29,7 +30,7 @@ public class GetProductQueryHandler : IRequestHandler<GetProductQuery, ProductDt
         if (product == null)
         {
             _logger.LogWarning("Product with ID {ProductId} not found", request.ProductId);
-            throw new ArgumentNullException(nameof(product), "产品不存在");
+            throw new ApiException(404, "产品不存在");
         }
 
         var dto = new ProductMapper().EntityToDto(product);

@@ -18,22 +18,22 @@ public interface IFileService
     /// 获取文件元数据
     /// </summary>
     /// <param name="fileId">文件ID</param>
-    /// <returns>文件信息，不存在返回 null</returns>
-    Task<FileDto?> GetAsync(Guid fileId);
+    /// <returns>文件信息，不存在时抛出 <see cref="Core.Exceptions.ApiException"/></returns>
+    Task<FileDto> GetAsync(Guid fileId);
 
     /// <summary>
     /// 获取下载所需信息
     /// </summary>
     /// <param name="fileId">文件ID</param>
-    /// <returns>下载信息，文件或元数据不存在返回 null</returns>
-    Task<FileDownload?> GetDownloadAsync(Guid fileId);
+    /// <returns>下载信息，元数据或磁盘文件不存在时抛出 <see cref="Core.Exceptions.ApiException"/></returns>
+    Task<FileDownload> GetDownloadAsync(Guid fileId);
 
     /// <summary>
     /// 删除文件及其元数据
     /// </summary>
     /// <param name="fileId">文件ID</param>
-    /// <returns>是否删除成功</returns>
-    Task<bool> DeleteAsync(Guid fileId);
+    /// <returns>不存在时抛出 <see cref="Core.Exceptions.ApiException"/></returns>
+    Task DeleteAsync(Guid fileId);
 }
 
 /// <summary>
