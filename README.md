@@ -10,7 +10,7 @@
 
 - **Clean Architecture**: 采用分层架构设计，包含 Core、Repositories、Services 和 API 层
 - **源代码生成器集成**: 集成多个主流的源代码生成器框架
-- **RESTful API**: 提供测试用订单和产品管理 API
+- **Minimal API**: 使用 Minimal API + 编译时端点扫描提供测试用订单和产品管理 API
 - **配置管理**: 使用源代码生成器自动注册配置选项
 - **日志记录**: 集成 Serilog 进行结构化日志记录
 - **API 文档**: 集成 Swagger/OpenAPI 文档
@@ -81,6 +81,49 @@ public static partial class ServicesExtensions
     public static partial IServiceCollection AddServices(this IServiceCollection services);
 }
 ```
+
+**Minimal API 端点扫描（官方推荐用法）:**
+项目 API 层全部采用 Minimal API，端点通过 `IEndpoint` 接口 + `ScanForTypes` 在编译时自动发现并映射，无需反射扫描或手工注册。
+
+```csharp
+public interface IEndpoint
+{
+    static abstract void MapEndpoint(IEndpointRouteBuilder endpoints);
+}
+
+public class ProductEndpoints : IEndpoint
+{
+    public static void MapEndpoint(IEndpointRouteBuilder endpoints)
+    {
+        var group = endpoints.MapGroup("/api/product").WithTags("产品管理");
+
+        group.MapGet("/{id:guid}", GetProductAsync)
+            .WithSummary("获取产品")
+            .WithDescription("根据产品 ID 获取产品详情。");
+    }
+
+    // 处理函数直接返回业务类型，统一响应由端点过滤器自动包装
+    private static Task<ProductDto> GetProductAsync(
+        Guid id, IProductService productService) => ...;
+}
+
+public static partial class EndpointExtensions
+{
+    [ScanForTypes(AssignableTo = typeof(IEndpoint), Handler = nameof(IEndpoint.MapEndpoint))]
+    public static partial IEndpointRouteBuilder MapEndpoints(this IEndpointRouteBuilder endpoints);
+}
+
+// Program.cs
+app.MapEndpoints();
+```
+
+所有接口统一返回 HTTP 200，业务状态放在 `code` 中：
+
+```json
+{ "code": 200, "data": { }, "msg": "成功" }
+```
+
+实现方式：分组通过 `WithApiResult()` 注册端点过滤器完成包装，业务失败抛出 `ApiException(code, msg)` 由全局异常中间件转换；OpenAPI 文档由 `ApiResultDocumentTransformer` 统一把 200 响应包装成同一结构。
 
 ### 5. 自定义配置注册生成器
 使用 ServiceScan.SourceGenerator 实现的自定义配置选项注册。

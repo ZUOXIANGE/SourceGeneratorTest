@@ -3,14 +3,22 @@ global using AutoCtor;
 using Microsoft.AspNetCore.HttpLogging;
 using Serilog.Events;
 using Serilog;
+using System.ComponentModel;
+using System.Globalization;
+using System.Reflection;
 using System.Text.Encodings.Web;
+using System.Text.Json.Nodes;
 using System.Text.Unicode;
+using Microsoft.OpenApi;
 using Repositories;
 using Serilog.Exceptions;
 using Core.Options;
 using Core.Data;
 using Mediator;
 using Scalar.AspNetCore;
+using SourceGeneratorTest.Endpoints;
+using SourceGeneratorTest.Infrastructure;
+using Core.Dtos;
 
 
 Console.Title = "SourceGenerator相关框架测试";
@@ -43,13 +51,43 @@ try
     builder.Host.UseSerilog(Log.Logger, true);
 
     // Add services to the container.
-    builder.Services.AddControllers().AddJsonOptions(options =>
+    builder.Services.ConfigureHttpJsonOptions(options =>
     {
-        options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+        options.SerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
     });
     // 使用内置 OpenAPI 支持并由 Scalar 提供 UI，并补充枚举的中文描述
     builder.Services.AddOpenApi(options =>
     {
+        // 把处理函数的原始返回类型包装成统一响应结构
+        options.AddDocumentTransformer(ApiResultDocumentTransformer.TransformAsync);
+
+        // 内置 OpenAPI 不会输出枚举值，也不会读取 [Description]，这里统一补齐
+        options.AddSchemaTransformer((schema, context, _) =>
+        {
+            var type = context.JsonTypeInfo.Type;
+            if (!type.IsEnum)
+                return Task.CompletedTask;
+
+            var values = new List<JsonNode>();
+            var names = new JsonArray();
+            var descriptions = new JsonObject();
+
+            foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Static))
+            {
+                var value = Convert.ToInt64(field.GetValue(null), CultureInfo.InvariantCulture);
+                var description = field.GetCustomAttribute<DescriptionAttribute>()?.Description ?? field.Name;
+
+                values.Add(JsonValue.Create(value));
+                names.Add(JsonValue.Create(field.Name));
+                descriptions[value.ToString(CultureInfo.InvariantCulture)] = description;
+            }
+
+            schema.Enum = values;
+            schema.AddExtension("x-enum-varnames", new JsonNodeExtension(names));
+            schema.AddExtension("x-enum-descriptions", new JsonNodeExtension(descriptions));
+
+            return Task.CompletedTask;
+        });
     });
     builder.Services.Configure<TestOptions>(builder.Configuration);
 
@@ -126,6 +164,7 @@ try
             options.DarkMode = true;
             options.DefaultHttpClient = new KeyValuePair<ScalarTarget, ScalarClient>(ScalarTarget.CSharp, ScalarClient.HttpClient);
             options.Theme = ScalarTheme.DeepSpace;
+            options.ExpandAllResponses = true;
             if (!string.IsNullOrWhiteSpace(devUrl))
             {
                 options.AddServer(devUrl, "开发环境");
@@ -134,8 +173,35 @@ try
     }
 
     app.UseHttpLogging();
-    app.UseRouting();
-    app.MapControllers();
+
+    //统一异常响应：未处理异常同样返回 HTTP 200，业务状态放在 code 中
+    app.Use(async (context, next) =>
+    {
+        try
+        {
+            await next(context);
+        }
+        catch (ApiException ex)
+        {
+            Log.Warning("业务异常({Code}): {Message}", ex.Code, ex.Message);
+            await Results.Ok(ApiResult<object?>.Failure(ex.Code, ex.Message)).ExecuteAsync(context);
+        }
+        catch (BadHttpRequestException ex)
+        {
+            Log.Warning(ex, "请求参数无效");
+            await Results.Ok(ApiResult<object?>.Failure(StatusCodes.Status400BadRequest, "请求参数无效"))
+                .ExecuteAsync(context);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "未处理的异常");
+            await Results.Ok(ApiResult<object?>.Failure(StatusCodes.Status500InternalServerError, "服务器内部错误"))
+                .ExecuteAsync(context);
+        }
+    });
+
+    //使用ServiceScan.SourceGenerator在编译时扫描并映射最小API端点
+    app.MapEndpoints();
 
     await app.RunAsync();
 }

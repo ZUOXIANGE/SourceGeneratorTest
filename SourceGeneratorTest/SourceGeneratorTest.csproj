@@ -4,7 +4,9 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <!-- OpenAPI 的 XML 注释缓存会把 ServiceScan 注入的 Attribute 注释与 Core 项目 XML 重复合并而报错，
+         端点文档已通过 WithSummary/WithDescription 提供，故此处不再生成 XML 注释文件 -->
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -28,6 +30,10 @@
     <PackageReference Include="Mediator.Abstractions" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Scalar.AspNetCore" />
+    <PackageReference Include="ServiceScan.SourceGenerator">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <!-- <PackageReference Include="Scrutor" Version="6.1.0" /> -->
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.AspNetCore" />
