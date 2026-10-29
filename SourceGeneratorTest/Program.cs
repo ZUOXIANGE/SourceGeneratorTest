@@ -1,5 +1,6 @@
 global using AutoCtor;
 
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpLogging;
 using Serilog.Events;
@@ -115,9 +116,20 @@ try
         // 设置是否将请求和响应日志合并为一条
         logging.CombineLogs = false;
     });
-    //builder.Services.AddHttpLoggingInterceptor<MyHttpLoggingInterceptor>();
+    builder.Services.AddHttpLoggingInterceptor<McpSensitiveHeaderLoggingInterceptor>();
 
     builder.Services.AddMemoryCache();
+
+    // MCP 鉴权：请求头携带 API Key，校验后按配置写入角色，供端点级与工具级授权使用
+    builder.Services.Configure<McpApiKeyOptions>(builder.Configuration.GetSection(McpApiKeyOptions.SectionName));
+    builder.Services.AddAuthentication(McpApiKeyDefaults.Scheme)
+        .AddScheme<AuthenticationSchemeOptions, McpApiKeyAuthenticationHandler>(
+            McpApiKeyDefaults.Scheme, McpApiKeyDefaults.DisplayName, _ => { });
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy(McpPolicies.Write,
+            policy => policy.RequireAuthenticatedUser().RequireRole(McpRoles.Write));
+    });
 
     // 添加数据库服务
     builder.Services.AddDatabase(builder.Configuration);
@@ -152,7 +164,9 @@ try
     //注册 MCP 服务：Product 相关的工具通过 Streamable HTTP 暴露给大模型客户端
     builder.Services.AddMcpServer()
         .WithHttpTransport(options => options.Stateless = true)
-        .WithTools<ProductMcpTools>();
+        .WithTools<ProductMcpTools>()
+        // 让工具上的 [Authorize] 生效，并按角色过滤 tools/list 结果
+        .AddAuthorizationFilters();
     //使用CustomHandler实现配置注入
     builder.Services.AddCustomOptions(builder.Configuration);
 
@@ -223,11 +237,15 @@ try
         }
     });
 
+    // 认证/授权中间件需位于端点与 MCP 映射之前
+    app.UseAuthentication();
+    app.UseAuthorization();
+
     //使用ServiceScan.SourceGenerator在编译时扫描并映射最小API端点
     app.MapEndpoints();
 
-    //映射 MCP 端点（Streamable HTTP）
-    app.MapMcp("/mcp");
+    //映射 MCP 端点（Streamable HTTP），整个端点必须携带有效 API Key
+    app.MapMcp("/mcp").RequireAuthorization();
 
     await app.RunAsync();
 }

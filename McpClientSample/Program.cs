@@ -5,12 +5,21 @@ using ModelContextProtocol.Protocol;
 // MCP 服务地址：与服务端 app.MapMcp("/mcp") 对应，可通过第一个命令行参数覆盖
 var endpoint = args.Length > 0 ? args[0] : "http://localhost:5088/mcp";
 
+// 服务端 McpAuth 中配置的 API Key：第二个参数 > 环境变量 MCP_API_KEY > 默认的写权限 Key
+var apiKey = args.Length > 1
+    ? args[1]
+    : Environment.GetEnvironmentVariable("MCP_API_KEY") ?? "dev-mcp-write-key";
+
 // Streamable HTTP 传输（服务端为 Stateless 模式，无需保持会话）
 var transport = new HttpClientTransport(new HttpClientTransportOptions
 {
     Endpoint = new Uri(endpoint),
     TransportMode = HttpTransportMode.StreamableHttp,
-    ConnectionTimeout = TimeSpan.FromSeconds(30)
+    ConnectionTimeout = TimeSpan.FromSeconds(30),
+    AdditionalHeaders = new Dictionary<string, string>
+    {
+        ["X-API-Key"] = apiKey
+    }
 });
 
 await using var client = await McpClient.CreateAsync(transport);

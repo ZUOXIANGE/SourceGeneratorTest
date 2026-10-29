@@ -1,9 +1,11 @@
 using System.ComponentModel;
+using Microsoft.AspNetCore.Authorization;
 using Core.Dtos;
 using Core.Entities;
 using Core.Exceptions;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
+using SourceGeneratorTest.Infrastructure;
 using Services;
 
 namespace SourceGeneratorTest.Mcp;
@@ -17,6 +19,7 @@ public sealed class ProductMcpTools(IProductService productService)
     /// <summary>
     /// 创建产品
     /// </summary>
+    [Authorize(Policy = McpPolicies.Write)]
     [McpServerTool(Name = "create_product"), Description("创建一个新产品，返回其唯一标识 ID。")]
     public Task<Guid> CreateProductAsync(
         [Description("产品名称")] string name,
@@ -60,6 +63,7 @@ public sealed class ProductMcpTools(IProductService productService)
     /// <summary>
     /// 删除产品
     /// </summary>
+    [Authorize(Policy = McpPolicies.Write)]
     [McpServerTool(Name = "delete_product"), Description("根据产品 ID 删除指定产品（软删除）。")]
     public async Task<bool> DeleteProductAsync([Description("产品 ID")] Guid productId)
     {
