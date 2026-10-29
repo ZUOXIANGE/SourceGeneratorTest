@@ -20,6 +20,7 @@ using Mediator;
 using Scalar.AspNetCore;
 using SourceGeneratorTest.Endpoints;
 using SourceGeneratorTest.Infrastructure;
+using SourceGeneratorTest.Mcp;
 using Core.Dtos;
 using Core.Exceptions;
 
@@ -148,6 +149,10 @@ try
     builder.Services.AddServices();
     //ServiceScan.SourceGenerator  可以通过名称等条件过滤
     builder.Services.AddRepositories();
+    //注册 MCP 服务：Product 相关的工具通过 Streamable HTTP 暴露给大模型客户端
+    builder.Services.AddMcpServer()
+        .WithHttpTransport(options => options.Stateless = true)
+        .WithTools<ProductMcpTools>();
     //使用CustomHandler实现配置注入
     builder.Services.AddCustomOptions(builder.Configuration);
 
@@ -220,6 +225,9 @@ try
 
     //使用ServiceScan.SourceGenerator在编译时扫描并映射最小API端点
     app.MapEndpoints();
+
+    //映射 MCP 端点（Streamable HTTP）
+    app.MapMcp("/mcp");
 
     await app.RunAsync();
 }

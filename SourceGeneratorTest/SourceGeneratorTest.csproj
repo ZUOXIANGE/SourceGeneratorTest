@@ -29,6 +29,7 @@
     </PackageReference>
     <PackageReference Include="Mediator.Abstractions" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" />
     <PackageReference Include="Scalar.AspNetCore" />
     <PackageReference Include="ServiceScan.SourceGenerator">
       <PrivateAssets>all</PrivateAssets>
